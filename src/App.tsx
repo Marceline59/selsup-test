@@ -73,8 +73,9 @@ class ParamEditor extends React.Component<Props, State> {
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {params.map((p) => (
           <div key={p.id} style={{ display: "flex", gap: "10px" }}>
-            <label style={{ width: "150px" }}>{p.name}</label>
+            <label htmlFor={p.id.toString()} style={{ width: "150px" }}>{p.name}</label>
             <input
+              id={p.id.toString()}
               type="text"
               value={this.state.paramValues.get(p.id) || ""}
               onChange={(e) => this.handleChange(p.id, e.target.value)}
@@ -119,7 +120,7 @@ function App() {
   const handleGetModel = () => {
     if (editorRef.current) {
       const model = editorRef.current.getModel()
-      alert(JSON.stringify(model))
+      alert(JSON.stringify(model, null, 2))
     }
   }
 
@@ -138,3 +139,5 @@ function App() {
 }
 
 export default App
+
+export { ParamEditor }
