@@ -11,7 +11,7 @@ interface ParamValue {
   value: string
 }
 
-interface Model {
+export interface Model {
   paramValues: ParamValue[]
 }
 

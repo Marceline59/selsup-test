@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { ParamEditor } from './App'
+import { ParamEditor, type Model } from './App'
+import { useEffect, useRef } from 'react'
 
 describe('ParamEditor', () => {
   const mockParams = [
@@ -32,4 +33,35 @@ describe('ParamEditor', () => {
     expect(input2.value).toBe('макси')
   })
 
+  test('корректный результат getModel() после изменений', async () => {
+    let editorRef: ParamEditor | null = null
+
+    const TestComponent = () => {
+      const ref = useRef<ParamEditor>(null)
+
+      useEffect(() => {
+        editorRef = ref.current
+      }, [])
+
+      return <ParamEditor ref={ref} params={mockParams} model={mockModel} />
+    }
+
+    render(<TestComponent />)
+
+    const input1 = screen.getByLabelText('Назначение') as HTMLInputElement
+
+    act(() => {
+      fireEvent.change(input1, { target: { value: 'офисное' } })
+    })
+
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    expect(editorRef).not.toBeNull()
+
+    const model: Model = editorRef!.getModel()
+    expect(model).toBeDefined()
+  
+    const param1 = model.paramValues.find((p) => p.paramId === 1)
+    expect(param1?.value).toBe('офисное')
+  })
 })
